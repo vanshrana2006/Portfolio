@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time Face Detection with Temperature Display</title>
+    <link rel="stylesheet" href="style1.css">
+</head>
+<body>
+
+<header>
+    <div class="header-content">
+        <h1>Real-Time Face Detection with Temperature Display</h1>
+        <p class="author-date">Vansh Rana | October 19, 2024</p>
+    </div>
+</header>
+
+<section class="project-overview">
+    <h2>Project Overview</h2>
+    <p>
+        <strong>Project Title:</strong> Real-time Face Detection with Temperature Annotation<br>
+        <strong>Objective:</strong> The primary aim of this project is to implement a real-time face detection system that can identify human faces in video feeds and display a placeholder body temperature for each detected face. This system utilizes the OpenCV library for image processing and computer vision tasks.
+    </p>
+    
+    <h3>Technologies Used</h3>
+    <ul>
+        <li><strong>Programming Language:</strong> Python</li>
+        <li><strong>Libraries:</strong>
+            <ul>
+                <li>OpenCV: For video capture and image processing</li>
+                <li>NumPy: For numerical operations (though not extensively used in this implementation)</li>
+            </ul>
+        </li>
+    </ul>
+
+    <h3>Key Features</h3>
+    <ul>
+        <li><strong>Face Detection:</strong> The project employs the Haar Cascade classifier to detect human faces in real-time video streams.</li>
+        <li><strong>Temperature Annotation:</strong> For each detected face, a placeholder temperature value is displayed above the bounding box, simulating a temperature detection feature.</li>
+        <li><strong>Real-time Processing:</strong> The system captures video from the default camera, processes each frame to detect faces, and updates the display in real-time.</li>
+        <li><strong>User Interaction:</strong> The program prompts the user to start the camera, allowing for a simple and interactive user experience.</li>
+        <li><strong>Graceful Exit:</strong> The application can be exited gracefully by pressing the 'q' key, ensuring a smooth termination of the video capture.</li>
+    </ul>
+
+    <h3>Future Enhancements</h3>
+    <ul>
+        <li><strong>Temperature Measurement:</strong> Integrate an actual temperature sensor or thermal camera to provide accurate temperature readings instead of a placeholder.</li>
+        <li><strong>Improved UI:</strong> Develop a more sophisticated graphical user interface for better user interaction and experience.</li>
+        <li><strong>Data Logging:</strong> Implement functionality to log detected temperatures and faces for analysis or reporting purposes.</li>
+        <li><strong>Integration with Alerts:</strong> Create an alert system that notifies users if a detected temperature exceeds a certain threshold.</li>
+    </ul>
+
+    <h3>Conclusion</h3>
+    <p>This project showcases fundamental concepts in computer vision and real-time image processing using OpenCV. The ability to detect faces and annotate them with relevant information serves as a foundational building block for more complex applications in areas such as health monitoring and security.</p>
+    <p>This implementation can be a significant addition to a portfolio, demonstrating proficiency in Python programming, computer vision techniques, and the ability to create interactive applications.</p>
+</section>
+
+<section>
+    <h2>Source Code</h2>
+    <p>Below is the source code for the real-time face detection program:</p>
+    <pre><code>
+import cv2
+import numpy as np
+
+# Ask the user if they want to start the camera work
+start_camera = input("Do you want to start the camera work? (yes/no): ")
+
+# If user agrees, initialize the camera
+if start_camera.lower() == "yes":
+    camera_id = 0  # Default camera ID
+    video_capture = cv2.VideoCapture(camera_id)
+
+    # Initialize face cascade outside the loop
+    face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+
+    while True:
+        # Capture frame-by-frame
+        ret, frame = video_capture.read()
+        if ret:
+            # Convert the frame to grayscale
+            gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+            # Detect faces in the image
+            faces = face_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30))
+
+            # Loop through detected faces
+            for (x, y, w, h) in faces:
+                # Draw a rectangle around each detected face
+                cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+                temperature = 37.5  # Placeholder for temperature
+                # Display the temperature above the detected face
+                cv2.putText(frame, f"Temperature: {temperature}°C", (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (36, 255, 12), 2)
+
+            # Show the frame with detections
+            cv2.imshow('Human Body Temperature Detection', frame)
+
+        else:
+            print("Error reading frame from camera")
+
+        # Exit the loop if 'q' is pressed
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
+
+    # Release the camera and close all OpenCV windows
+    video_capture.release()
+    cv2.destroyAllWindows()
+else:
+    print("Camera work not started.")
+    </code></pre>
+</section>
+
+<section>
+    <h2>Source Code Repository</h2>
+    <p>You can find the complete source code on GitHub:</p>
+    <p><a href="https://github.com/vanshrana2006/Python-Projects/blob/main/Python%20Projects/joget.py/temperature.py" target="_blank">GitHub Repository</a></p>
+</section>
+
+<div class="home-button">
+    <a href="index.html" target="_parent">Home</a>
+</div>
+
+<footer>
+    <p>&copy; 2024 Vansh Rana. All rights reserved.</p>
+</footer>
+
+</body>
+</html>

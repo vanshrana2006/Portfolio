@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time Hand Gesture Recognition and Finger Counter Using Mediapipe</title>
+    <link rel="stylesheet" href="style2.css">
+</head>
+<body>
+
+<header>
+    <div class="header-content">
+        <h1>Real-Time Hand Gesture Recognition and Finger Counter</h1>
+        <p class="author-date">Vansh Rana | October 22, 2024</p>
+    </div>
+</header>
+
+<nav>
+    <ul>
+        <li><a href="https://github.com/vanshrana2006/Python-Projects/blob/main/Python%20Projects/Computer%20Vision/venv/Pose/Finger/fingercounter.py" target="_blank">Github Link</a></li>
+        <li><a href="index.html">Home</a></li>
+    </ul>
+</nav>
+
+<section class="project-overview">
+    <h2>Project Overview</h2>
+    <p>
+        <strong>Project Title:</strong> Real-time Hand Gesture Recognition with Finger Counting<br>
+        <strong>Objective:</strong> This project aims to implement a real-time hand gesture recognition system that counts open fingers from video feeds using the Mediapipe framework.
+    </p>
+    
+    <h3>Technologies Used</h3>
+    <ul>
+        <li><strong>Programming Language:</strong> Python</li>
+        <li><strong>Libraries:</strong>
+            <ul>
+                <li>Mediapipe: For hand tracking and gesture recognition</li>
+                <li>OpenCV: For video capture and display</li>
+            </ul>
+        </li>
+    </ul>
+
+    <h3>Source Code</h3>
+    <p>Below is the source code for the real-time hand gesture recognition and finger counting program:</p>
+    <pre><code>
+import cv2
+import mediapipe as mp
+
+cap = cv2.VideoCapture(0)
+cap.set(3, 640)
+cap.set(4, 480)
+
+mpHand = mp.solutions.hands
+hands = mpHand.Hands()
+mpDraw = mp.solutions.drawing_utils
+
+calculated_distances = [[5, 4], [6, 8], [10, 12], [14, 16], [18, 20]]
+
+while cap.isOpened():
+    success, img = cap.read()
+    
+    if success:
+        img = cv2.flip(img, 1)
+        
+        img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        
+        results = hands.process(img_rgb)
+        
+        counter = 0
+        if results.multi_hand_landmarks:
+        
+            motions = []
+            
+            for handLms in results.multi_hand_landmarks:
+                mpDraw.draw_landmarks(img, handLms, mpHand.HAND_CONNECTIONS)
+                
+                for id, lm in enumerate(handLms.landmark):
+                    h, w, c = img.shape
+                    cx, cy = int(lm.x * w), int(lm.y * h)
+                    
+                    if id == 4:
+                        cy = ((cy + motions[3][2]) / 2) + cap.get(4) / 30
+                        
+                    motions.append([id, cx, cy])
+        
+            for item in calculated_distances:
+                downFingerPosY = motions[item[0]][2]
+                upperFingerPosY = motions[item[1]][2]
+
+                isFingerOpen = downFingerPosY > upperFingerPosY
+                counter += 1 if isFingerOpen else 0
+                                    
+        cv2.rectangle(img, (0, 0), (200, 50), (0, 0, 0), cv2.FILLED)
+        cv2.putText(img, str(counter), (20, 20), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255))
+        cv2.imshow("Capture", img)
+        cv2.waitKey(1)
+    </code></pre>
+
+    <h3>Conclusion</h3>
+    <p>This implementation showcases the use of Mediapipe and OpenCV for interactive applications, enabling intuitive control through hand gestures.</p>
+</section>
+
+<footer>
+    
+    <p>&copy; 2024 Vansh Rana. All rights reserved.</p>
+</footer>
+
+</body>
+</html>

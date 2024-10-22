@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time Object Detection with YOLOv8 Using Webcam</title>
+    <link rel="stylesheet" href="style3.css">
+</head>
+<body>
+
+<header>
+    <div class="header-content">
+        <h1>Real-Time Object Detection with YOLOv8 Using Webcam</h1>
+        <p class="author-date">Vansh Rana | October 19, 2024</p>
+    </div>
+</header>
+
+<section class="project-overview">
+    <h2>Project Overview</h2>
+    <p>
+        <strong>Project Title:</strong> Real-Time Object Detection with YOLOv8<br>
+        <strong>Objective:</strong> This project implements a real-time object detection system using YOLOv8, which identifies objects in video feeds from a webcam. The system utilizes the Ultralytics YOLO library and OpenCV for image processing and computer vision tasks.
+    </p>
+    
+    <h3>Technologies Used</h3>
+    <ul>
+        <li><strong>Programming Language:</strong> Python</li>
+        <li><strong>Libraries:</strong>
+            <ul>
+                <li>OpenCV: For video capture and image processing</li>
+                <li>Ultralytics YOLO: For object detection tasks</li>
+            </ul>
+        </li>
+    </ul>
+
+    <h3>Key Features</h3>
+    <ul>
+        <li><strong>Object Detection:</strong> The project uses YOLOv8 to detect objects in real-time video streams.</li>
+        <li><strong>Real-time Processing:</strong> The system captures video from the default camera, processes each frame to detect objects, and updates the display in real-time.</li>
+        <li><strong>Dynamic Bounding Boxes:</strong> Detected objects are highlighted with bounding boxes and class names with confidence scores.</li>
+        <li><strong>User Interaction:</strong> The application runs in a loop until the user decides to quit by pressing the 'q' key.</li>
+    </ul>
+
+    <h3>Future Enhancements</h3>
+    <ul>
+        <li><strong>Model Fine-tuning:</strong> Implement fine-tuning of the YOLOv8 model for specific object detection tasks.</li>
+        <li><strong>Enhanced UI:</strong> Create a more interactive user interface to improve user experience.</li>
+        <li><strong>Integration with Additional Sensors:</strong> Combine with other sensors or systems for more complex applications.</li>
+    </ul>
+
+    <h3>Conclusion</h3>
+    <p>This project demonstrates key concepts in real-time computer vision using YOLOv8. The ability to detect and annotate objects in video feeds is a valuable feature applicable in various domains such as surveillance, robotics, and automated systems.</p>
+</section>
+
+<section>
+    <h2>Source Code</h2>
+    <p>Below is the source code for the real-time object detection program:</p>
+    <pre><code>
+import cv2
+from ultralytics import YOLO
+
+yolo = YOLO('yolov8s.pt')
+videoCap = cv2.VideoCapture(0)
+
+def getColours(cls_num):
+    base_colors = [(255, 0, 0), (0, 255, 0), (0, 0, 255)]
+    color_index = cls_num % len(base_colors)
+    increments = [(1, -2, 1), (-2, 1, -1), (1, -1, 2)]
+    color = [base_colors[color_index][i] + increments[color_index][i] * (cls_num // len(base_colors)) % 256 for i in range(3)]
+    return tuple(color)
+
+while True:
+    ret, frame = videoCap.read()
+    if not ret:
+        continue
+    results = yolo.track(frame, stream=True)
+
+    for result in results:
+        classes_names = result.names
+        for box in result.boxes:
+            if box.conf[0] > 0.4:
+                [x1, y1, x2, y2] = box.xyxy[0]
+                x1, y1, x2, y2 = int(x1), int(y1), int(x2), int(y2)
+                cls = int(box.cls[0])
+                class_name = classes_names[cls]
+                colour = getColours(cls)
+                cv2.rectangle(frame, (x1, y1), (x2, y2), colour, 2)
+                cv2.putText(frame, f'{classes_names[int(box.cls[0])]} {box.conf[0]:.2f}', (x1, y1), cv2.FONT_HERSHEY_SIMPLEX, 1, colour, 2)
+
+    cv2.imshow('frame', frame)
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
+
+videoCap.release()
+cv2.destroyAllWindows()
+    </code></pre>
+</section>
+
+<section>
+    <h2>Source Code Repository</h2>
+    <p>You can find the complete source code on GitHub:</p>
+    <p><a href="https://github.com/vanshrana2006/Python-Projects/blob/main/Python%20Projects/Computer%20Vision/venv/Object/objectdetection.py" target="_blank">GitHub Repository</a></p>
+</section>
+
+<div class="home-button">
+    <a href="index.html" target="_parent">Home</a>
+</div>
+
+<footer>
+    <p>&copy; 2024 Vansh Rana. All rights reserved.</p>
+</footer>
+
+</body>
+</html>
